@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <title>Teacher's Day</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <link rel="icon" type="image/x-icon" href="images/favicon-32x32.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css"> -->
+
+    <style>
+        @font-face {
+            font-family: "经典魏碑简"
+              src:
+                local("经典魏碑简"),
+                url("Font/经典魏碑简.woff") format("woff"),
+                url("Font/经典魏碑简.ttf") format("ttf");
+        }
+
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            /*if the monitor is not 16:9, the background black is important*/
+            background-color: black;
+        }
+
+        .container {
+            /* max-width: 100%; */
+            position: relative;
+        }
+
+        img {
+            /* must set display to block/flex, otherwise img default display is inline, then it will
+               leave a gap below the picture that caused by vertical-align. After that, when
+               in full screen mode, it will cause problem that makes a scroll bar appear.  */
+            display: block;
+            /*make sure image cover all the browswer width*/
+            width: 100vw;
+            /* max-width: 100%;   */
+        }
+
+        .mySlides {
+            position: relative;
+            /*make it display to none by default, will make it to block using javascript*/
+            display: none;
+        }
+
+        @keyframes fade {
+            from { opacity: 0.3; }
+            to { opacity: 1; }
+        }
+
+        .animation {
+            animation-name: fade;
+            animation-duration: 1.5s;
+        }
+
+        .table-donation {
+            position: absolute;
+            left: 50%;
+            transform: translate(-50%);
+            top: 22%;
+            z-index: 1;
+            font-family: "经典魏碑简", "KaiTi", "楷体", serif; 
+            /*as a fallback if broswer do not support clamp*/
+            font-size: 16px;
+            font-size: clamp(0.5rem, -0.2875rem + 3.5vw, 2.25rem);
+            width: 92%;
+            /* color: blue; */
+            /* font-weight: bold; */
+            /* background-color: rgb(180, 180, 255); */
+            
+        }
+
+        table, td, th {
+            border: 1px solid black;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        td {
+            /* Allow mutliple white space */
+            white-space: pre;
+            width: 33.33%;
+            /* font-size: 20px */
+        }
+
+        /* tr {
+            height: 10px;
+        } */
+
+        .btn-container {
+            opacity: 0;
+            display: flex;
+            flex-direction: column;
+            position: absolute;
+            gap: 0.25rem;
+            top: 3%;
+            right: 0;
+            z-index: 999;
+        }
+
+        .btn-container:hover {
+            opacity: 1;
+        }
+
+        .btn-box {
+            padding: 0.25rem;
+            border: 1px solid grey;
+            background-color: rgb(255, 255, 255);
+            display: flex;
+            align-items: center;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 1rem;
+        }
+
+        .btn-change {
+            width: 1.5rem;
+            height: 1.5rem;
+            border: 1px solid rgba(70, 70, 70, 0.2);
+            margin: 0 0.25rem;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            background-color: rgba(125, 125, 125, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-change:hover {
+            background-color: rgba(125, 125, 125, 0.8);
+        }
+
+        @media screen and (max-width: 400px) {
+            .btn-box {
+                font-size: 0.75rem;
+                padding: 0.1rem;
+            }
+
+            .btn-change {
+                width: 1rem;
+                height: 1rem;
+                font-size: 0.5rem;
+            }
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            /* width for blue rectangle */
+            width: 3rem;   
+            /* height for blue rectangle */
+            height: 1.5rem;
+            margin-left: 0.25rem;
+        }
+
+        /* hide the default check mark style */
+        .switch input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            /* color when inactive */
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            /* width for white rectangle */
+            height: 1.25rem;
+            /* height for white rectangle */
+            width: 1.25rem;
+            left: 0.25rem;
+            top: 0.125rem;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        /* input:checked and .slider has the same parent element(like inside a div), apply to the first .slider after input:checked */ 
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked + .slider:before {
+            /* calculated by width of blue rectangle - width of white rectangle - 2*left of white rectangle */
+            /* 3rem - 1.25rem - 2*0.25 = 1.25rem */
+            /* Move the slider to the right */
+            -webkit-transform: translateX(1.25rem);
+            -ms-transform: translateX(1.25rem);
+            transform: translateX(1.25rem);
+        }  
+
+        @media screen and (max-width: 400px) {
+            .switch {
+                height: 1rem;
+            }
+
+             .slider:before  {
+                height: 0.75rem;
+             }
+        }
+
+    </style>
+
+</head>
+
+<body>
+    <main>
+        <div class="container">
+            <div class="mySlides animation">
+                <img src="images/slide1.jpg" alt="">
+            </div>
+            <div class="mySlides animation">
+                <img src="images/slide2.jpg" alt="">
+                <table class="table-donation">
+                    <tbody id="table-body"></tbody>
+                </table>
+            </div>
+            <div class="btn-container">
+                <div class="btn-box">
+                    <div>Font Size: <span id="showFontSize">px</span></div>
+                    <button onclick="fontSizeIncrease()" class="btn-change">+</button>
+                    <button onclick="fontSizeDecrease()" class="btn-change">−</button>
+                </div>
+                <div class="btn-box">
+                    <div>Table Height: <span id="showTableHeight">px</span></div>
+                    <button onclick="tableHeightIncrease()" class="btn-change">+</button>
+                    <button onclick="tableHeightDecrease()" class="btn-change">−</button>
+                </div>
+                <div class="btn-box">
+                    <div>Transition Time: <span id="showTransitionTime">s</span></div>
+                    <button onclick="transitionTimeIncrease()" class="btn-change">+</button>
+                    <button onclick="transitionTimeDecrease()" class="btn-change">−</button>
+                </div>
+                <div class="btn-box">
+                    <div>Update Interval: <span id="showUpdateInterval">s</span></div>
+                    <button onclick="updateTimeIncrease()" class="btn-change">+</button>
+                    <button onclick="updateTimeDecrease()" class="btn-change">−</button>
+                </div>
+                <div class="btn-box">
+                    Slide Show:
+                    <label class="switch">
+                        <input onchange="slideShowOnOff()" id="slideShowMode" type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="btn-box">
+                    <div>Display Slide: 
+                        <span id="displayCurrentSlideNumber">1</span>
+                        <span>of</span>
+                        <span id="displayTotalSlideNumber">1</span>     
+                    </div>
+                    <button onclick="prevSlide()" class="btn-change">&#60</button>
+                    <button onclick="nextSlide()" class="btn-change">&#62</button>
+                </div>
+            </div>
+        </div>
+        
+    </main>
+
+    <!--Part 1: Slide Show-->
+    <script>
+        //Global Variable: Use to handle which slide to show up
+        let slideIndex = 0;
+
+        //Global variable to remember current showing slide number
+        let currentSlideIndex;
+
+        //Global Variable to set the slide transition time, use here and in function transitionTimeIncrease and function transitionTimeDecrease
+        let SLIDE_TRANSITION_TIME = 10000;
+
+        //Use to clear and reset the new slide transition time
+        //Use here and also in Part 2: Transition
+        let intervalTransition;
+
+        //Run the slide show
+        //Method 1: Use showSlides() to run the first slide when first load, then use setInterval to move to the next slide
+        showSlides();
+
+        intervalTransition = setInterval(showSlides, SLIDE_TRANSITION_TIME);
+
+        //Method 2: Use showSlides() only but inside function showSlides() have to use setTimeOut()
+        //showSlides();
+
+        function showSlides() {
+
+            let slide = document.getElementsByClassName("mySlides");
+            
+            // Write total slide number to display
+            let displayTotaltSlideNumber = document.getElementById("displayTotalSlideNumber");
+            displayTotalSlideNumber.innerHTML = slide.length;
+
+            // Set all the slide display to none
+            for (let i = 0; i < slide.length; i++) {
+                slide[i].style.display = "none";
+            }
+
+            //Display the slide
+            slide[slideIndex].style.display = "block";
+            // console.log(`slideIndex: ${slideIndex} change to block`);
+
+            //Write current slide number to display
+            currentSlideIndex = slideIndex;
+            let displayCurrentSlideNumber = document.getElementById("displayCurrentSlideNumber");
+            displayCurrentSlideNumber.innerHTML = `${currentSlideIndex + 1}` ;
+
+            //Increase the slide number
+            slideIndex++;
+            // console.log(`After slideIndex++, slideIndex is ${slideIndex}`);
+
+            //Handle if the slide reached the end of the slide
+            if(slideIndex >= slide.length) {
+                // console.log(`Slide already at the end, so reset the slideIndex to 0`);
+                slideIndex = 0;
+            }
+
+            //For Method 2
+            // setTimeout(showSlides, 5000);
+        }
+
+        //Handle Button Prev and Next
+        function prevSlide() {
+            let slide = document.getElementsByClassName("mySlides");
+
+            console.log(`currentSlideIndex: ${currentSlideIndex}`);
+            if (currentSlideIndex - 1 < 0) {
+                slideIndex = slide.length - 1; // to last slide
+                // console.log (`Slide return to the last slide`);
+            } else {
+                slideIndex = currentSlideIndex - 1;
+            }
+
+            // console.log(`slide go to index: ${slideIndex}`);
+            showSlides();
+        }
+
+        function nextSlide () {
+            let slide = document.getElementsByClassName("mySlides");
+
+            if (currentSlideIndex + 1 >= slide.length ) {
+                slideIndex = 0; // to first slide
+            } else {
+                slideIndex = currentSlideIndex + 1;
+            }
+
+            showSlides();
+        }
+
+    </script>
+
+    <!-- Part 2: Transition -->
+    <script>
+        //Global Variable that already declare in Part 1:
+        // SLIDE_TRANSITION_TIME, intervalTransition
+
+        //Write the SLIDE_TRANSITION_TIME to show up
+        const showTransitionTime = document.getElementById("showTransitionTime");
+        showTransitionTime.innerHTML = `${SLIDE_TRANSITION_TIME / 1000}s`;
+
+        //Handle Transition Time with Buttons
+            function transitionTimeIncrease() {
+                SLIDE_TRANSITION_TIME += 1000;
+                changeTransitionTime();
+            }
+
+            function transitionTimeDecrease() {
+                SLIDE_TRANSITION_TIME -= 1000;
+                changeTransitionTime();
+            }
+
+            function changeTransitionTime() {
+                console.log(`New Transition Time: ${SLIDE_TRANSITION_TIME / 1000}s`);
+                const checkbox = document.getElementById("slideShowMode");
+                // If Slide Show Mode is ON
+                if (checkbox.checked) {
+                    //Clear the existing interval
+                    clearInterval(intervalTransition);
+                    //Set up a new interval with the updated time
+                    intervalTransition = setInterval(showSlides, SLIDE_TRANSITION_TIME);
+                }
+
+                //Update new Transition Time in display
+                const showTransitionTime = document.getElementById("showTransitionTime");
+                showTransitionTime.innerHTML = `${SLIDE_TRANSITION_TIME / 1000}s`;
+            }
+
+
+            //Handle Slide Show/Transition On or Off
+            function slideShowOnOff() {
+                const checkbox = document.getElementById("slideShowMode");
+
+                // If Slide Show Mode is ON
+                if (checkbox.checked) {
+                    //Rerun intervalTransition to make slide show on again
+                    intervalTransition = setInterval(showSlides, SLIDE_TRANSITION_TIME);
+                    console.log(`Slide Show is ON`);
+                } else { 
+                    //If Slide Show Mode is OFF
+                    //Clear the existing interval to stop the slide show
+                    clearInterval(intervalTransition);
+                    console.log(`Slide Show is OFF`);
+                }
+            }
+    </script>
+
+   
+
+    <!--Part 3: Fetch Data From Google Sheet -->
+
+    <!-- Google API -->
+        <script src="https://apis.google.com/js/api.js"></script>
+    <!-- easyData -->
+        <script type="text/javascript" src="js/easyData-google-sheets.js"></script>
+
+    <!-- easyData - Creating table -->
+    <script>
+    
+        // Your API KEY
+        const API_KEY = "AIzaSyDFMn1f6GitHO1jez-YMIkGI-3JsWrZiqo";
+        //Global variable to define update interval to auto refetch the data from google sheet,
+        //use here and function updateTimeIncrease and function updateTimeDecrease
+        let UPDATE_INTERVAL = 30000;
+        
+        //Write the Update Interval to show up
+        const showUpdateInterval = document.getElementById("showUpdateInterval");
+        showUpdateInterval.innerHTML = `${UPDATE_INTERVAL / 1000}s`;
+
+        //Use to clear and reset the new update time
+        let intervalUpdateTime;
+
+        //Variable to remember the status, it use to auto calculate the row's height for only first time loading 
+        let isFirstLoad = true;
+
+        //Global variable use here and at Part 4: function tableHeightDecrease, function tableHeightIncrease
+        let ROW_HEIGHT = 10;  // as a fallback as when no internet, no table is created, then it has no height, then click on tableHeight + or table Height- will have NaN error
+
+        function displayResult2(response) {
+                      
+            let tableBody = "";
+
+            //Fetch the data and creating table in html format
+            response.result.values.forEach((row, index) => {
+                tableBody += `<tr id="row_${index+1}">`; // Add id to the <tr> element
+                row.forEach((val) => (tableBody += "<td>" + val + "</td>"));
+                tableBody += "</tr>";
+            });
+
+            //Display the table
+            document.getElementById("table-body").innerHTML = tableBody;
+       
+            //Adjust each row height for only first time load (use to auto adjust the height)
+            if (isFirstLoad) {
+
+                //Get the slide width by using browswer width as browswer width = slide width
+                const windowWidth = window.innerWidth;
+                console.log(`windowWidth: ${windowWidth}px`);
+                //Slide height = 9/16*windowWidth (slide ratio is 16:9 width : height)
+                //Table is position top: 22%, and bottom must leave some space, so table height = slide height * 0.73
+
+                // Find the number of rows in the table then use divide to calculate each row height
+                let row_number = document.getElementsByTagName("tr");
+                console.log(`row_number: ${row_number.length}`);
+
+                // pixel must using whole number so use Math.floor to round it.
+                //So, each tr height is calculated as below.
+                let customHeight = Math.floor((9 / 16 * windowWidth) * 0.73 / row_number.length);
+                console.log(`initial customHeight: ${customHeight}px`);
+
+                //Store the customHeight for use later
+                ROW_HEIGHT = customHeight;
+                console.log(`Initial ROW_HEIGHT: ${ROW_HEIGHT}px`);
+
+                //Write Table Height in display
+                const showTableHeight = document.getElementById("showTableHeight");
+                showTableHeight.innerHTML = `${ROW_HEIGHT}px`;
+
+                //Make it to false, so that it would not run for second time because after that i will use setInterval to repeat this function again to update google sheet data
+                isFirstLoad = false;
+            }
+
+            //Update all table row height, first ROW_HEIGHT calculate automaticaly, later on the ROW_HEIGHT is obtain from function TableHeight+ or TalbeHeight-
+            const cells = document.getElementsByTagName("tr");
+            for (let i = 0; i < cells.length; i++) { cells[i].style.height = ROW_HEIGHT + "px"; }
+            console.log(`Data Updated`);
+        }
+
+        function loadData() {
+            //Get the data if there have internet connection, prevent when no internet connection, the previous data will go blank.
+            if (navigator.onLine) {
+                // Spreadsheet ID
+                const spreadsheetId = "1lDuEebRGdRJJZXoiSQ2RfMN40uJSUuIPhcF2Jooz4Yc";
+                // Set the Sheet Name and Range
+                const range = "Display!A1:D10";
+                
+                getPublicValues({ spreadsheetId, range }, displayResult2);
+
+            } else {
+                console.log(`No Internet Connection`);
+            }
+        }
+
+        window.addEventListener("load", (e) => {
+            initOAuthClient({ apiKey: API_KEY });
+        });
+ 
+        document.addEventListener("gapi-loaded", (e) => {
+            //Fetch the data for the first time
+            loadData();
+
+            // Set interval to refetch the data
+            intervalUpdateTime = setInterval(loadData, UPDATE_INTERVAL);
+        });
+
+
+        // Handle Update Interval with Buttons
+        function updateTimeIncrease() {
+            UPDATE_INTERVAL += 5000;
+
+            console.log(`New Update Interval: ${UPDATE_INTERVAL / 1000}s`);
+            changeUpdateTime();  
+        }
+
+        function updateTimeDecrease() {
+            UPDATE_INTERVAL -= 5000;
+
+            if (UPDATE_INTERVAL < 5000) { 
+                UPDATE_INTERVAL = 5000;
+                console.log(`Update Interval have set to a minimum of 5s`);
+             } else {
+                console.log(`New Update Interval: ${UPDATE_INTERVAL / 1000}s`);
+             }
+            
+            changeUpdateTime(); 
+        }
+
+        function changeUpdateTime () {
+            //Clear the existing interval
+            clearInterval(intervalUpdateTime);
+
+            //Set up a new interval with the updated time
+            intervalUpdateTime = setInterval(loadData, UPDATE_INTERVAL);
+
+            //Update new Update Interval in display
+            const showUpdateInterval = document.getElementById("showUpdateInterval");
+            showUpdateInterval.innerHTML = `${UPDATE_INTERVAL / 1000}s`;
+        }
+
+    </script>
+
+
+    <!--Part 4: Handle Table Data Font-Size and Height with Buttons -->
+    <script>
+
+        //Global variable
+        const table_body = document.getElementById("table-body");
+        let FONT_SIZE = parseInt(window.getComputedStyle(table_body).fontSize);  
+        const showFontSize = document.getElementById("showFontSize");
+
+        //Write Font Size in display
+        showFontSize.innerHTML = `${FONT_SIZE}px`;
+
+        function fontSizeIncrease () {
+            FONT_SIZE += 1;
+            changeFontSize();
+        }
+
+        function fontSizeDecrease() {
+            FONT_SIZE -= 1;
+            changeFontSize();
+        }
+
+        function changeFontSize () {
+            console.log(`New Font Size: ${FONT_SIZE}px`);
+
+            table_body.style.fontSize = FONT_SIZE + "px";
+
+            //Update New Font Size in display
+            showFontSize.innerHTML = `${FONT_SIZE}px`;
+        }
+
+        function tableHeightIncrease() {
+            // Increase the height by 1 pixels, ROW_HEIGHT is global variable it defined at Part 3: easyData - Creating table            
+            ROW_HEIGHT += 1;
+            changeTableHeight();
+        }
+
+        function tableHeightDecrease() {
+            // Decrease the height by 1 pixels, ROW_HEIGHT is global variable it defined at Part 3: easyData - Creating table
+            ROW_HEIGHT -= 1;
+            changeTableHeight();
+        }
+
+        function changeTableHeight() {
+            console.log(`New Row Height: ${ROW_HEIGHT}px`);
+
+            // Set the new height
+            const cells = document.getElementsByTagName("tr");
+            for (let i = 0; i < cells.length; i++) { 
+                cells[i].style.height = ROW_HEIGHT + "px"; 
+            }
+
+            //Update new Table Height in display
+            const showTableHeight = document.getElementById("showTableHeight");
+            showTableHeight.innerHTML = `${ROW_HEIGHT}px`;   
+        }
+    
+    </script>
+
+
+    <!--Part 5: Disable shortcut key F5 and Ctrl + R to refresh, to prevent after press F5 refresh manually, and if there is no
+    internet connection, the previous data will go blank. -->
+    <script>
+
+    // Function to handle keydown event
+    function handleKeyDown(event) {
+        // Check if the pressed key is F5 (keyCode 116) or Ctrl+R (keyCode 82)
+        // Be carefull if you click on the developer window that make developer window active
+        // then pressing F5 will still refresh the broswer
+        // below code only prevent pressing F5 if you are active
+        // inside browswer area (means after you click the area inside the broswer not the broswer window)
+        if (event.keyCode === 116 || (event.ctrlKey && event.keyCode === 82)) {
+                // Prevent the default behavior
+                event.preventDefault();
+
+                console.log('F5 refresh and Ctrl + R are disabled.');
+        }
+    }
+
+    // Add Event Listener after the DOM is finined loading
+    document.addEventListener('DOMContentLoaded', function () {
+        // Attach the keydown event listener to the document
+        document.addEventListener('keydown', handleKeyDown);
+        console.log(`Event Listener to disable F5 refresh and Ctrl + R is implemented.`);
+
+    });
+
+    </script>
+
+</body>
+
+</html>
