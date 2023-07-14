@@ -22,6 +22,9 @@
                 url("Font/经典魏碑简.ttf") format("truetype");
         }
 
+        /* you also can put JingDianWeiBeiJian font here if you want */
+        /* but since I only put 经典魏碑简 work well in computer that setting non-unicode in US or Chinese , so can skip put JingDianWeiBeiJian*/
+        /* if testing running offline, then may be required to install both 经典魏碑简 or JingDianWeiBeiJian to display properly if non-unicode is set to US or Chinese */
 
         *, *::before, *::after {
             box-sizing: border-box;
@@ -44,8 +47,31 @@
                leave a gap below the picture that caused by vertical-align. After that, when
                in full screen mode, it will cause problem that makes a scroll bar appear.  */
             display: block;
-            /*make sure image cover all the browswer width*/
-            width: 100vw;
+
+            /*make sure image cover all the browswer width
+            setting width: 100vw only will cause problem like when i use a laptop with screen 1366 x 768, when enter full screen mode, it have scroll bars appear in both vertical and horizontal
+            although this problem can be solve by simply pressing F12 entering developer mode, then exit developer mode, it will fix the problem with no more scroll bar
+            There is 2 reasons why this happen.
+            The First Reason (The main reason)
+            this width is assuming there is no scoll bar there, so when the body content is
+            too long, then it will appear vertical scroll bar that make the available display
+            width decrease, while the image still taking full width that counting the width as
+            there is no scroll bar, as a result there is not enough space for display the
+            whole image width, so it will then appear a horizontal bar too. 
+            E.g: when there is no vertical scroll,  100vw = 1280px, image also 1280px width. (as a remark: innerWidth also counting as no scroll bar there, so also 1280px)
+            if there is a vertical scroll bar, available display width become 1263px, 17px is vertical scroll bar width.
+            But 100vw is still refer to 1280px width, so the image still is 1280px. (as a remark inner.width also is 1280px)
+            By using JS document.body.clientWidth, it show 1263px (this will get the actualy display width consider you do not set a specific width for body)
+            The actually display wide(1263px) is not enough spcace to show up the image width (1280px)
+            at the end it will appear a horizontal scroll bar. */
+
+            /* width: 100vw; */
+
+            /* To fix the above problem, you either add a max-width: 100% after width: 100vw, or just using width: 100%;
+            Remember 100% is relative to its parent width (as body here).
+            Using percentange is not including the scroll bar width, so that is why it is working. 
+            Because the body is not set a specific width, so its width */
+            width: 100%;
             /* max-width: 100%;   */
         }
 
@@ -71,6 +97,9 @@
             transform: translate(-50%);
             top: 22%;
             z-index: 1;
+            /* you have to create a new font for 经典魏碑简 where its font name is in English and install both 经典魏碑简 and JingDianWeiBeiJian to the computer in case the system is US cannot recognise 经典魏碑简 */
+            /* but I have use font-face to handle(required online), so if the computer locally do not have the font still can display properly */
+            font-family: "经典魏碑简", "JingDianWeiBeiJian", "KaiTi", "楷体", serif; 
             font-family: "经典魏碑简", "KaiTi", "楷体", serif; 
             /*as a fallback if broswer do not support clamp*/
             font-size: 16px;
@@ -238,7 +267,7 @@
     <main>
         <div class="container">
             <div class="mySlides animation">
-                <img src="images/slide1.jpg" alt="">
+                <img id = "firstImage" src="images/slide1.jpg" alt="">
             </div>
             <div class="mySlides animation">
                 <img src="images/slide2.jpg" alt="">
@@ -246,7 +275,7 @@
                     <tbody id="table-body"></tbody>
                 </table>
             </div>
-            <div class="btn-container">
+            <div id="btn-container" class="btn-container">
                 <div class="btn-box">
                     <div>Font Size: <span id="showFontSize">px</span></div>
                     <button onclick="fontSizeIncrease()" class="btn-change">+</button>
@@ -665,6 +694,82 @@
     });
 
     </script>
+
+
+    <script>
+        // Get the element with the class name 'slide'
+        const slideElements = document.querySelectorAll('.mySlides');
+
+        // Get the element with the id 'btn-container'
+        const btnContainer = document.getElementById('btn-container');
+
+        // Add a click event listener to each slide element
+        slideElements.forEach(function (slideElement) {
+            slideElement.addEventListener('click', function () {
+                // Check if the opacity of the btnContainer is 0
+                if (getComputedStyle(btnContainer).opacity === '0') {
+                    // Perform your action here
+                    nextSlide();
+
+                    console.log('Slide element clicked and btn-container opacity is 0');
+
+                }
+            });
+        });
+
+
+    </script>
+
+
+
+
+
+
+
+    <script>
+
+    /*For Debug purpose*/    
+    function getImageSize() {
+        const image = document.getElementById("firstImage");
+        let imageWidth = parseInt(getComputedStyle(image).width, 10);
+        let imageHeight = parseInt(getComputedStyle(image).height, 10);
+
+
+        if (isNaN(imageWidth) || isNaN(imageHeight)) {
+            setTimeout(getImageSize, 100); // call the function again every 100 milliseconds until imageHeight is not NaN
+            return;
+        }
+        console.log(`img width: ${imageWidth}px,    img height: ${imageHeight}px`); //it may be log several times when imageHeight is NaN because it will call function several times
+    }
+
+    function getActualScreenSize() {
+        let bodyWidth = document.body.clientWidth;
+        let htmlWidth = document.documentElement.clientWidth;
+        console.log(`Body width: ${bodyWidth}   html width: ${htmlWidth}`);
+    }
+
+    function getInnerSize() {
+        console.log(`inner width: ${window.innerWidth}, innerHeight: ${window.innerHeight}`);
+    }
+
+    window.onload = function() {
+        
+        getImageSize();
+        getInnerSize();
+        getActualScreenSize();
+
+        window.addEventListener("resize", function() {
+            getImageSize();
+            getInnerSize();
+            getActualScreenSize();
+        });  
+
+        console.log(`finish`);
+    };
+
+    </script>
+
+
 
 </body>
 
