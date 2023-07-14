@@ -707,11 +707,15 @@
         slideElements.forEach(function (slideElement) {
             slideElement.addEventListener('click', function () {
                 // Check if the opacity of the btnContainer is 0
-                if (getComputedStyle(btnContainer).opacity === '0') {
-                    // Perform your action here
-                    nextSlide();
+                if (getComputedStyle(btnContainer).opacity === '1') {
+                    btn.Container.style.opacity = "0";
+                    
 
-                    console.log('Slide element clicked and btn-container opacity is 0');
+                    console.log('btn-container opacity change to 0');
+
+                } else {
+                    nextSlide();
+                    console.log('perform nextSlide');
 
                 }
             });
