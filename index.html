@@ -139,6 +139,8 @@
             top: 3%;
             right: 0;
             z-index: 999;
+            /* prevent user select the text in phone, make it easier to use */
+            user-select: none;
         }
 
         .btn-container:hover {
@@ -259,6 +261,50 @@
              }
         }
 
+
+        .back-container {
+            opacity: 0;
+            position: absolute;
+            left: 5px;
+            bottom: 5px;
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .circle {
+            width: 32px;
+            height: 32px;
+            border: 1px solid rgba(50, 50, 50, 0.5);
+            border-radius: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .triangle-left {
+            margin-left: -23px;
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-right: 12px solid rgba(50, 50, 50, 0.5);
+            border-bottom: 8px solid transparent;
+        }
+
+        .back-container:hover {
+            opacity: 1;
+        }
+
+        .back-container:active .circle{
+            border-color: rgba(50, 50, 50, 1);
+        }
+
+        .back-container:active .triangle-left {
+            border-right-color: rgba(50, 50, 50, 1);
+        }
+
+
     </style>
 
 </head>
@@ -312,6 +358,10 @@
                     <button onclick="prevSlide()" class="btn-change">&#60</button>
                     <button onclick="nextSlide()" class="btn-change">&#62</button>
                 </div>
+            </div>
+            <div id="back-container" class="back-container" onclick="prevSlide()">
+                <div class="circle"></div> 
+                <div class="triangle-left"></div>
             </div>
         </div>
         
@@ -381,7 +431,7 @@
         function prevSlide() {
             let slide = document.getElementsByClassName("mySlides");
 
-            console.log(`currentSlideIndex: ${currentSlideIndex}`);
+            // console.log(`currentSlideIndex: ${currentSlideIndex}`);
             if (currentSlideIndex - 1 < 0) {
                 slideIndex = slide.length - 1; // to last slide
                 // console.log (`Slide return to the last slide`);
@@ -696,37 +746,76 @@
     </script>
 
 
+    <!-- Handle Goto Next Slide when click the slide/pic -->
     <script>
-        // Get the element with the class name 'slide'
-        const slideElements = document.querySelectorAll('.mySlides');
 
-        // Get the element with the id 'btn-container'
-        const btnContainer = document.getElementById('btn-container');
+    const slideElements = document.querySelectorAll('.mySlides');
+    const btnContainer = document.getElementById('btn-container');
+    const backContainer =  document.getElementById('back-container');
 
-        // Add a click event listener to each slide element
-        slideElements.forEach(function (slideElement) {
-            slideElement.addEventListener('click', function () {
-                // Check if the opacity of the btnContainer is 0
-                if (getComputedStyle(btnContainer).opacity === '1') {
-                    btn.Container.style.opacity = "0";
-                    
+    // Use to check if btn-container is touch
+    // Since there is  no hover effect in phone, so when you click the area of btn-container, the btn-container will start change the opacity from 0 to 1 (make the container visible)
+    // and then when you click the area beside the btn-container like in slide then the btn-container will change the opacity back to 0 (make it invisible)
+    // but click the area of slide will immedially call the function nextSlide, make the slide go to the next slide.
+    // this is not i want, i want the first click on the slide just make the btn-container change the opacitiy to 0 (make it invisible)
+    // and the slide remain on the same slide, and the second click on slide will cause the slide go to the next slide
+    // may be can use swipe geture to move the slide in phone, but at this moment i try to use click to move to the next slide
+    let isBtnContainerTouch = false;
 
-                    console.log('btn-container opacity change to 0');
+    //do the same for back-container
+    let isBackContainerTouch = false;
+    
+    // Add a touchstart event listener to track btnContainer when is touched
+    btnContainer.addEventListener('touchstart', function () {
+        // Element is being touched (hover state equivalent)
+        isBtnContainerTouch = true;
+        isBackContainerTouch = false;
+        console.log(`isBtnContainerTouch: ${isBtnContainerTouch}, isBackContainerTouch: ${isBackContainerTouch}`);
+    });
 
-                } else {
-                    nextSlide();
-                    console.log('perform nextSlide');
+    backContainer.addEventListener('touchstart', function () {
+            // Element is being touched (hover state equivalent)
+            isBackContainerTouch = true;
+            isBtnContainerTouch = false;
+            console.log(`isBtnContainerTouch: ${isBtnContainerTouch}, isBackContainerTouch: ${isBackContainerTouch}`);
+    });
 
-                }
-            });
+
+    // when btn-container is touched and user click at the black background, i have to change isBtnContainerTouch to false
+    // This line checks multiple conditions to determine if the touch event occurred outside both the container and the body.
+    // target !== document.body checks if the target element is not equal to the body.
+    // !document.body.contains(target) checks if the target element is not contained within the body.
+    // If all these conditions are true, it means the touch event occurred outside both the container and the body.
+    document.documentElement.addEventListener("touchstart", function () {
+        var target = event.target;
+        if (target !== document.body && !document.body.contains(target)) {
+            // Code to execute when touch event occurs outside the container
+            isBtnContainerTouch = false;
+            isBackContainerTouch = false;
+            console.log('Touch event outside the container');
+            console.log(`isBtnContainerTouch: ${isBtnContainerTouch}, isBackContainerTouch: ${isBackContainerTouch}`);
+        }        
+    });
+
+
+    // Add a click event listener to each slide element
+    slideElements.forEach(function (slideElement) {
+        slideElement.addEventListener('click', function (event) {
+            // Check if btn-container or back-container is touch
+            if (isBtnContainerTouch || isBackContainerTouch ) {
+                event.stopPropagation(); // Prevent the default action on slide click
+                isBtnContainerTouch = false; // mark down btn-container is no longer being touch
+                isBackContainerTouch = false; 
+                console.log(`isBtnContainerTouch: ${isBtnContainerTouch}, isBackContainerTouch: ${ isBackContainerTouch }`);
+            }  else {
+                // Perform your action here when btn-container is not visible
+                nextSlide();
+                console.log('Go to Next Slide');
+            }
         });
-
+    });
 
     </script>
-
-
-
-
 
 
 
